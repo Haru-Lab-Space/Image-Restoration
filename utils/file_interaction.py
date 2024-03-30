@@ -1,6 +1,8 @@
 import json
 import os
 import pandas as pd
+import numpy as np
+from PIL import Image
 
 def read_json(path):
     with open(path, 'r') as json_file:
@@ -61,3 +63,17 @@ def delete_folder(folder_path):
         print(f"Folder '{folder_path}' deleted successfully.")
     except OSError as e:
         print(f"Error: {folder_path} : {e.strerror}")
+
+def save_PIL(path, image):
+    image.save(path)
+
+def convert_12_to_8(image):
+    scaled_data = (image / 4095 * 255).astype(np.uint8)
+
+    # Reshape the data to the desired shape
+    image_data = scaled_data.reshape((271, 271))
+
+    # Convert the NumPy array to a PIL Image
+    image = Image.fromarray(image_data)
+
+    return image

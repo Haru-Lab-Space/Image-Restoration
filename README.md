@@ -9,3 +9,10 @@ Mỗi file đều là numpy có shape (100, 271, 271). Chúng đại diện cho 
 "Quy tắc quan trọng: Chúng tôi mong đợi dữ liệu sẽ rất khó khăn để khôi phục. Một phần của thách thức đến từ việc tập dữ liệu được chụp dưới một loạt các điều kiện nhiễu khác nhau. Do đó, chúng tôi nới lỏng ràng buộc về số lượng mô hình được đào tạo. Bạn có thể tùy chọn đào tạo các mô hình khác nhau cho các mức độ nhiễu khác nhau. Nếu bạn làm như vậy, bạn sẽ cần nộp tất cả các mô hình trong giai đoạn xác minh người chiến thắng."
 ### data_final
 Mỗi file đều là numpy có shape (271, 271, 100)
+
+### Symbol
+- high: mean very wrong
+- low: mean a bit good
+
+## Related work
+[Xia_2023_ICCV] 

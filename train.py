@@ -1,26 +1,9 @@
 import torch
 import torch.nn as nn
 from torch.optim import Adam
-import argparse
 from tqdm import tqdm
 from utils.loss_func import ssim
 import os
-
-parser = argparse.ArgumentParser(description='Training Image-Restoration')
-parser.add_argument('--num_epoch', type=int,
-                    default=100, help='Number of epochs')
-parser.add_argument('--batch_size', type=int,
-                    default=64, help='Batch size for training')
-parser.add_argument('--load_checkpoint', type=str, default=None,
-                    help='path of checkpoint')
-parser.add_argument('--learning_rate', '-lr', type=float,
-                    default=0.0001, help='Learning rate')
-parser.add_argument('--save_checkpoint', type=str,
-                    default=None, help='Path to save checkpoints')
-parser.add_argument('--num_frame', type=int, default=12,
-                    help='number of frames for the model')
-args = parser.parse_args()
-
 
 device = 'cpu' if torch.cuda.is_available() else 'cuda'
 
@@ -29,7 +12,7 @@ def init_model(model=None):
     pass
 
 
-def train():
+def train(args):
     if args.save_checkpoint is None:
         os.mkdir('save_checkpoint')
 
@@ -53,7 +36,7 @@ def train():
 
     # schedule
 
-    # training
+    # trainingS
     total_iterations = 0
     losses = []
     model.train()
@@ -65,10 +48,10 @@ def train():
         for data in data_iterator:
             num_iterations += 1
             total_iterations += 1
-            input_, target = data
-            input_ = input_.to(device)
+            input, target = data
+            input = input.to(device)
             target = target.to(device)
-            output = model(input_)
+            output = model(input)
 
             optimizer.zero_grad()
 
