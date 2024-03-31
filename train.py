@@ -7,9 +7,10 @@ from utils.loss_func import ssim
 import os
 from utils.file_interaction import mkdir
 from config import load_config
-from utils.scheduler import GradualWarmupScheduler
+from utils.scheduler import GradualWarmupScheduler, CosineDecayWithWarmUpScheduler
 from models.model_1 import Model_1
 from torch.utils.data import DataLoader
+
 # get device
 device = 'cpu' if torch.cuda.is_available() else 'cuda'
 
@@ -47,14 +48,14 @@ class Trainer():
         optimizer = Adam(self.model.parameters(), lr=new_lr)
 
         # scheduler
-        # total_iters = self.args['num_epochs']
-        # start_iter = 1
-        # warmup_iter = 5000
-        # scheduler_cosine = optim.lr_scheduler.CosineAnnealingWarmRestarts(
-        #     optimizer, total_iters-warmup_iter, eta_min=1e-6)
-        # scheduler = GradualWarmupScheduler(
-        #     optimizer, multiplier=1, total_epoch=warmup_iter, after_scheduler=scheduler_cosine)
-        # scheduler.step()
+        total_iters = self.args['num_epochs']
+        start_iter = 1
+        warmup_iter = 50
+        scheduler_cosine = optim.lr_scheduler.CosineAnnealingWarmRestarts(
+            optimizer, total_iters-warmup_iter, eta_min=1e-6)
+        scheduler = GradualWarmupScheduler(
+            optimizer, multiplier=1, total_epoch=warmup_iter, after_scheduler=scheduler_cosine)
+        scheduler.step()
 
         # data loader
         train_loader = DataLoader(
@@ -62,7 +63,7 @@ class Trainer():
         valid_loader = DataLoader(
             self.valid_dataset, self.args['batch_size'], shuffle=True)
 
-        return optimizer, new_lr, train_loader, valid_loader
+        return optimizer, new_lr, scheduler, train_loader, valid_loader
 
     def valid(self, valid_loader, epoch):
         self.model.eval()
@@ -88,7 +89,7 @@ class Trainer():
             # losses_valid.append(avg_loss)
             data_iterator.set_postfix(loss=avg_loss)
 
-    def train(self, train_loader, optimizer, epoch):
+    def train(self, train_loader, optimizer, scheduler, epoch):
         # if self.args.save_checkpoint is None:
         #     mkdir(self.args.save_checkpoint)
 
@@ -135,7 +136,7 @@ class Trainer():
 
             loss.backward()
             optimizer.step()
-            # scheduler.step()
+            scheduler.step()
 
         torch.save({'iter': epoch,
                     'state_dict': self.model.state_dict(),
@@ -143,10 +144,10 @@ class Trainer():
                     }, os.path.join('save_checkpoint', f"model_{epoch}.pth"))
 
     def start_training(self):
-        optimizer, new_lr, train_loader, valid_loader = self.init_hyperparams()
+        optimizer, new_lr, scheduler, train_loader, valid_loader = self.init_hyperparams()
         print("Start Traning ")
         for epoch in range(self.args['num_epochs']):
             self.train(train_loader=train_loader,
-                       optimizer=optimizer, epoch=epoch)
+                       optimizer=optimizer, scheduler=scheduler, epoch=epoch)
             self.valid(valid_loader=valid_loader, epoch=epoch)
         print("Done")
