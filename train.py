@@ -11,9 +11,6 @@ from utils.scheduler import GradualWarmupScheduler, CosineDecayWithWarmUpSchedul
 from models.model_1 import Model_1
 from torch.utils.data import DataLoader
 
-# get device
-device = 'cpu' if torch.cuda.is_available() else 'cuda'
-
 
 class Trainer():
     def __init__(self, args, train_dataset, valid_dataset, loss_func):
@@ -27,9 +24,6 @@ class Trainer():
         self.loss_func = loss_func
         self.train_dataset = train_dataset
         self.valid_dataset = valid_dataset
-
-    # def init_model():
-    #     return Model_1()
 
     def init_hyperparams(self):
         if self.args['save_checkpoint'] is None:
@@ -73,7 +67,6 @@ class Trainer():
         data_iterator = tqdm(valid_loader, desc=f'Epoch {epoch+1}')
         for data in tqdm(data_iterator):
             num_iterations += 1
-            # total_iterations += 1
 
             input_video, target = data['input'], data['output']
             input_video = input_video.to('cuda')
@@ -90,25 +83,6 @@ class Trainer():
             data_iterator.set_postfix(loss=avg_loss)
 
     def train(self, train_loader, optimizer, scheduler, epoch):
-        # if self.args.save_checkpoint is None:
-        #     mkdir(self.args.save_checkpoint)
-
-        # load dataset and dataLoader
-        # train_loader = None
-
-        # # Init parameter of model before training
-        # # model = init_model()
-        # if self.args.load_checkpoint is not None:
-        #     checkpoint = torch.load(self.args.load_checkpoint)
-        #     self.model.load_state_dict(checkpoint['state_dict'])
-        # self.model.to(device)
-        # new_lr = self.args.learning_rate
-
-        # # optimizer
-        # optimizer = Adam(self.model.parameters(), lr=new_lr)
-
-        # # schedule
-        # trainingS
         self.model.train()
 
         loss_sum = 0
@@ -116,13 +90,13 @@ class Trainer():
         data_iterator = tqdm(train_loader, desc=f'Epoch {epoch+1}')
         for data in data_iterator:
             num_iterations += 1
-            # total_iterations += 1
             input_video, target = data['input'], data['output']
             # print(input_video)
             input_video = input_video.to('cuda')
             input_video = input_video.permute(0, 2, 1, 3, 4)
             target = target.to('cuda')
             target = target.permute(0, 2, 1, 3, 4)
+            # output model
             output = self.model(input_video)
 
             optimizer.zero_grad()
