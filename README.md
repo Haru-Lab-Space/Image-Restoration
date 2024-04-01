@@ -15,4 +15,23 @@ Mỗi file đều là numpy có shape (271, 271, 100)
 - low: mean a bit good
 
 ## Related work
-[Xia_2023_ICCV] 
+[Xia_2023_ICCV] bao gồm ba thành phần: mạng trích xuất trước IR nhỏ gọn (CPEN), dynamic IR transformer và mạng khử nhiễu. Trainging processing consists of two  stages: pretraining and training. In pretraining stage, we input ground-truth image into CPEN to capture the compact IR prior representation (IRP) to guide DIRformer. And in the training stage, we training the deffusion model to directly estimate the same IRP in CPEN only using LQ images.
+
+Diffusion model thường được sử dụng trong nhiệm vụ tổng hợp hình ảnh. Dưới góc nhìn của nhiệm vụ khôi phục hình ảnh, diffusion trở nên quá phức tạp và tốn kém, đôi khi, chính sự phức tạp đó khiến cho hiệu suất của mô hình giảm. 
+
+- Sử dụng Transformer vì nó có thể mô hình hóa sự phụ thuộc pixel dài hạn (knowledge base). Và tại đó, họ sử dụng Transformer tại quá trình xây dựng UNet.
+- Sử dụng Diffusion Model vì các kết quả mô hình thực tế cho thấy nó hiệu quả hơn các phương pháp truyền thống.
+- Compact IR prior extraction network (CPEN)
+- Dynamic Gated Feed-Forward Network (DGFN) 
+- Dynamic Multi-Head Transposed Attention (DMTA)
+
+
+SRCNN
+DnCNN
+ARCNN
+RePaint
+
+
+## Motivation
+Nguyên nhân gây ra sự mờ ảnh chính là máy ảnh không theo kịp tốc độ thay đổi hình ảnh. Do đó, chúng ta sẽ cố gắng tái tạo lại thực tế này bằng cách gộp k ảnh liền kề thành một ảnh duy nhất từ đó phân tích độ mờ do vấn đề không bắt kịp frame của máy ảnh.
+
