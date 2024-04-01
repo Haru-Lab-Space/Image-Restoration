@@ -30,9 +30,7 @@ class Trainer():
             mkdir('save_checkpoint')
         else:
             mkdir(self.args['save_checkpoint'])
-        if self.args['load_checkpoint'] is not None:
-            checkpoint = torch.load(self.args['load_checkpoint'])
-            self.model.load_state_dict(checkpoint['state_dict'])
+
         self.model.to('cuda')
 
         # learning rate
